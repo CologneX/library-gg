@@ -4,7 +4,7 @@ import { redirect } from 'next/navigation';
 import { setSessionCookie } from '../cookie';
 import { verifyPasswordHash } from '../password';
 import { generateRandomSessionToken, createSession } from '../session';
-import prisma from '@/lib/prisma';
+import { prisma } from '@/lib/prisma';
 
 const signIn = async (formData: FormData) => {
     const formDataRaw = {

@@ -12,7 +12,6 @@ export default async function CreateLoanPage() {
 
   // Fetch active members and collections for selectors
   const members = await prisma.member.findMany({
-    where: { deletedAt: null },
     select: { id: true, username: true },
   });
 

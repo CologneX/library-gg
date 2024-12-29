@@ -20,6 +20,3 @@ export function formatDate(date: Date): string {
 
     return `${day} ${month} ${year}`;
 }
-
-// Usage example:
-// formatDate(new Date()) -> "15 November 23, 14:30"

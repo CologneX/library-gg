@@ -5,17 +5,15 @@ import LoanTable from "@/components/loan/table";
 import PaginationComp from "@/components/pagination";
 import Link from "next/link";
 import { Button } from "@nextui-org/button";
+import { PageProps } from "@/.next/types/app/page";
 
-export default async function LoanPage({
-  searchParams,
-}: {
-  searchParams: { page?: string };
-}) {
+export default async function LoanPage({ props }: { props: PageProps }) {
+  const { page } = await props.searchParams;
   const { member } = await getAuth();
   if (!member) {
     return redirect("/login");
   }
-  const currentPage = Number(searchParams.page) || 1;
+  const currentPage = Number(page) || 1;
   const limit = 10;
   const skip = (currentPage - 1) * limit;
 

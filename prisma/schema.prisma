@@ -18,6 +18,7 @@ model Member {
   username     String    @unique @db.VarChar(50)
   passwordHash String    @map("password_hash") @db.VarChar(255)
   isAdmin      Boolean   @default(false) @map("is_admin")
+  createdAt    DateTime  @default(now()) @map("created_at")
   editedAt     DateTime? @updatedAt @map("edited_at")
   deletedAt    DateTime? @map("deleted_at")
   loans        Loan[]
@@ -36,6 +37,7 @@ model Collection {
   isbn            String?    @unique @db.VarChar(20)
   totalCopies     Int        @default(1) @map("total_copies")
   availableCopies Int        @default(1) @map("available_copies")
+  createdAt       DateTime   @default(now()) @map("created_at")
   editedAt        DateTime?  @updatedAt @map("edited_at")
   deletedAt       DateTime?  @map("deleted_at")
   loanItems       LoanItem[]
@@ -53,6 +55,7 @@ model Loan {
   returnDueDate DateTime   @map("return_due_date") @db.Date
   returnDate    DateTime?  @map("return_date") @db.Date
   status        LoanStatus @default(ongoing)
+  createdAt     DateTime   @default(now()) @map("created_at")
   editedAt      DateTime?  @updatedAt @map("edited_at")
   deletedAt     DateTime?  @map("deleted_at")
   member        Member     @relation(fields: [memberId], references: [id], onDelete: Cascade)
@@ -68,6 +71,7 @@ model LoanItem {
   id           String     @id @default(uuid()) @map("loan_item_id")
   loanId       String     @map("loan_id")
   collectionId String     @map("collection_id")
+  createdAt    DateTime   @default(now()) @map("created_at")
   editedAt     DateTime?  @updatedAt @map("edited_at")
   deletedAt    DateTime?  @map("deleted_at")
   loan         Loan       @relation(fields: [loanId], references: [id], onDelete: Cascade)

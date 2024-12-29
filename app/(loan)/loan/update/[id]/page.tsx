@@ -3,18 +3,12 @@ import { prisma } from "@/lib/prisma";
 import { getAuth } from "@/app/api/auth/cookie";
 import { Metadata } from "next";
 import UpdateLoanForm from "./form";
-
-interface PageProps {
-  params: {
-    id: string;
-  };
-}
+import { PageParam } from "@/types/param";
 
 async function getLoan(id: string) {
   const loan = await prisma.loan.findFirst({
     where: {
       id,
-      deletedAt: null,
     },
     include: {
       member: true,
@@ -35,22 +29,24 @@ async function getLoan(id: string) {
 
 export async function generateMetadata({
   params,
-}: PageProps): Promise<Metadata> {
-  const loan = await getLoan(params.id);
+}: PageParam): Promise<Metadata> {
+  const { id } = await params;
+  const loan = await getLoan(id);
 
   return {
     title: `Update Loan: ${loan.member.username}`,
   };
 }
 
-export default async function UpdateLoanPage({ params }: PageProps) {
+export default async function UpdateLoanPage({ params }: PageParam) {
+  const { id } = await params;
   const { member } = await getAuth();
 
   if (!member?.isAdmin) {
     notFound();
   }
 
-  const loan = await getLoan(params.id);
+  const loan = await getLoan(id);
 
   // Get available collections for adding to loan
   const collections = await prisma.collection.findMany({

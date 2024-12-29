@@ -2,12 +2,10 @@ import { notFound } from "next/navigation";
 import { getAuth } from "@/app/api/auth/cookie";
 import { prisma } from "@/lib/prisma";
 import UpdateCollectionForm from "./form";
+import { PageParam } from "@/types/param";
 
-export default async function UpdateCollectionPage({
-  params,
-}: {
-  params: { id: string };
-}) {
+export default async function UpdateCollectionPage({ params }: PageParam) {
+  const { id } = await params;
   const { member } = await getAuth();
 
   if (!member?.isAdmin) {
@@ -16,8 +14,7 @@ export default async function UpdateCollectionPage({
 
   const collection = await prisma.collection.findFirst({
     where: {
-      id: params.id,
-      deletedAt: null,
+      id,
     },
   });
 
