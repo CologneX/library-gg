@@ -1,5 +1,5 @@
 "use client";
-import { Collection, Loan, LoanItem, Member } from "@prisma/client";
+import { Collection, Member } from "@prisma/client";
 import {
   Button,
   Card,
@@ -14,25 +14,19 @@ import {
   TableColumn,
   TableRow,
   TableCell,
-  Chip,
-  Divider,
+  DatePicker,
+  ScrollShadow,
   Alert,
 } from "@nextui-org/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { formatDate } from "@/lib/date";
+import { parseDate } from "@internationalized/date";
+import { I18nProvider } from "@react-aria/i18n";
 import { Trash2Icon } from "lucide-react";
 import { ApiError } from "@/types/api";
 
-type LoanWithRelations = Loan & {
-  member: Member;
-  loanItems: (LoanItem & {
-    collection: Collection;
-  })[];
-};
-
 interface Props {
-  loan: LoanWithRelations;
+  members: Pick<Member, "id" | "username">[];
   collections: Pick<
     Collection,
     "id" | "title" | "author" | "publisher" | "isbn" | "availableCopies"
@@ -44,23 +38,21 @@ interface SelectedCollection
   key: string;
 }
 
-export default function UpdateLoanForm({ loan, collections }: Props) {
+export default function CreateLoanForm({ members, collections }: Props) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<ApiError[]>([]);
   const [message, setMessage] = useState("");
+  const [selectedMember, setSelectedMember] = useState<Set<string>>(
+    new Set([])
+  );
+  const [loanDate, setLoanDate] = useState<Date>(new Date());
+  const [returnDueDate, setReturnDueDate] = useState<Date>(
+    new Date(loanDate.getTime() + 7 * 24 * 60 * 60 * 1000)
+  );
   const [selectedCollections, setSelectedCollections] = useState<
     SelectedCollection[]
-  >(
-    loan.loanItems.map((item) => ({
-      key: item.collection.id,
-      id: item.collection.id,
-      title: item.collection.title,
-      author: item.collection.author || "",
-      publisher: item.collection.publisher || "",
-      isbn: item.collection.isbn || "",
-    }))
-  );
+  >([]);
 
   const getFieldError = (fieldName: string) => {
     return errors.find((error) => error.field === fieldName)?.message;
@@ -69,7 +61,9 @@ export default function UpdateLoanForm({ loan, collections }: Props) {
   const availableCollections = collections.filter(
     (c) => !selectedCollections.find((sc) => sc.id === c.id)
   );
-
+  useEffect(() => {
+    setReturnDueDate(new Date(loanDate.getTime() + 7 * 24 * 60 * 60 * 1000));
+  }, [loanDate]);
   const handleAddCollection = (keys: any) => {
     const collectionId = Array.from(keys)[0];
     const collection = collections.find((c) => c.id === collectionId);
@@ -94,49 +88,27 @@ export default function UpdateLoanForm({ loan, collections }: Props) {
     );
   };
 
-  const getLoanStatus = (status: string) => {
-    switch (status) {
-      case "ongoing":
-        return { label: "Dipinjam", color: "warning" };
-      case "returned":
-        return { label: "Dikembalikan", color: "success" };
-      case "overdue":
-        return { label: "Terlambat", color: "danger" };
-      default:
-        return { label: status, color: "default" };
-    }
-  };
-
   const handleSubmit = async () => {
     setIsLoading(true);
     setErrors([]);
     setMessage("");
 
-    // Validate at least one collection
-    if (selectedCollections.length === 0) {
-      setErrors([
-        { field: "collectionIds", message: "Minimal harus meminjam 1 koleksi" },
-      ]);
-      setMessage("Data tidak valid");
-      setIsLoading(false);
-      return;
-    }
+    const memberId = Array.from(selectedMember)[0];
     const data = {
+      memberId,
       collectionIds: selectedCollections.map((c) => c.id),
+      loanDate,
+      returnDueDate,
     };
 
     try {
-      const response = await fetch(`/api/loan?id=${loan.id}`, {
-        method: "PATCH",
+      const response = await fetch("/api/loan", {
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          collectionIds: selectedCollections.map((c) => c.id),
-        }),
+        body: JSON.stringify(data),
       });
-
-      console.log(data);
 
       const result = await response.json();
 
@@ -158,9 +130,8 @@ export default function UpdateLoanForm({ loan, collections }: Props) {
   return (
     <Card className="max-w-xl mx-auto w-full">
       <CardHeader>
-        <h1 className="text-2xl font-bold">Update Peminjaman</h1>
+        <h1 className="text-2xl font-bold">Buat Peminjaman Baru</h1>
       </CardHeader>
-
       <CardBody className="flex flex-col gap-4">
         {message && (
           <Alert
@@ -169,39 +140,49 @@ export default function UpdateLoanForm({ loan, collections }: Props) {
             description={message}
           />
         )}
-        <div className="grid grid-cols-2 gap-4 w-full">
-          <div>
-            <p className="text-small text-default-500">Peminjam</p>
-            <p>{loan.member.username}</p>
-          </div>
-          <div>
-            <p className="text-small text-default-500">Status</p>
-            <Chip color={getLoanStatus(loan.status).color as any}>
-              {getLoanStatus(loan.status).label}
-            </Chip>
-          </div>
-          <div>
-            <p className="text-small text-default-500">Tanggal Pinjam</p>
-            <p>{formatDate(loan.loanDate)}</p>
-          </div>
-          <div>
-            <p className="text-small text-default-500">Tanggal Kembali</p>
-            <p>{formatDate(loan.returnDueDate)}</p>
-          </div>
-          {loan.returnDate && (
-            <div>
-              <p className="text-small text-default-500">
-                Tanggal Dikembalikan
-              </p>
-              <p>{formatDate(loan.returnDate)}</p>
-            </div>
-          )}
+
+        <Select
+          label="Pilih Anggota"
+          selectedKeys={selectedMember}
+          isVirtualized
+          onSelectionChange={(keys) => setSelectedMember(keys as Set<string>)}
+          isInvalid={!!getFieldError("memberId")}
+          errorMessage={getFieldError("memberId")}
+        >
+          {members.map((member) => (
+            <SelectItem key={member.id} value={member.id}>
+              {member.username}
+            </SelectItem>
+          ))}
+        </Select>
+
+        <div className="grid grid-cols-2 gap-4">
+          <I18nProvider locale="id-ID">
+            <DatePicker
+              label="Tanggal Pinjam"
+              value={parseDate(loanDate.toISOString().split("T")[0])}
+              onChange={(e) => e && setLoanDate(new Date(e.toString()))}
+              isInvalid={!!getFieldError("loanDate")}
+              errorMessage={getFieldError("loanDate")}
+            />
+            <DatePicker
+              label="Tanggal Kembali"
+              value={parseDate(returnDueDate.toISOString().split("T")[0])}
+              onChange={(e) => e && setReturnDueDate(new Date(e.toString()))}
+              isInvalid={!!getFieldError("returnDueDate")}
+              errorMessage={getFieldError("returnDueDate")}
+            />
+          </I18nProvider>
         </div>
 
         <div className="space-y-2">
           <Select
+            isVirtualized
             label="Tambah Koleksi"
-            onSelectionChange={(keys) => handleAddCollection(new Set(keys))}
+            selectedKeys={selectedCollections.map(
+              (collection) => collection.key
+            )}
+            onSelectionChange={(keys) => handleAddCollection(keys)}
             isInvalid={!!getFieldError("collectionIds")}
             errorMessage={getFieldError("collectionIds")}
           >
@@ -218,8 +199,8 @@ export default function UpdateLoanForm({ loan, collections }: Props) {
               </SelectItem>
             ))}
           </Select>
-
-          <Table aria-label="Koleksi yang dipinjam">
+          {/* <ScrollShadow className="w-full" orientation="horizontal"> */}
+          <Table aria-label="Koleksi yang dipilih">
             <TableHeader>
               <TableColumn>Judul</TableColumn>
               <TableColumn>Penulis</TableColumn>
@@ -227,7 +208,7 @@ export default function UpdateLoanForm({ loan, collections }: Props) {
               <TableColumn>ISBN</TableColumn>
               <TableColumn>Aksi</TableColumn>
             </TableHeader>
-            <TableBody emptyContent="Belum ada koleksi dipinjam">
+            <TableBody emptyContent="Belum ada koleksi dipilih">
               {selectedCollections.map((collection) => (
                 <TableRow key={collection.key}>
                   <TableCell>{collection.title}</TableCell>
@@ -248,6 +229,7 @@ export default function UpdateLoanForm({ loan, collections }: Props) {
               ))}
             </TableBody>
           </Table>
+          {/* </ScrollShadow> */}
         </div>
       </CardBody>
 
@@ -256,10 +238,12 @@ export default function UpdateLoanForm({ loan, collections }: Props) {
           color="primary"
           isLoading={isLoading}
           fullWidth
-          isDisabled={selectedCollections.length === 0}
+          isDisabled={
+            selectedMember.size === 0 || selectedCollections.length === 0
+          }
           onPress={handleSubmit}
         >
-          Simpan Perubahan
+          Buat Peminjaman
         </Button>
       </CardFooter>
     </Card>

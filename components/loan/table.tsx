@@ -12,6 +12,8 @@ import {
 import LoanUpdateButton from "./update-buttons";
 import { formatDate } from "@/lib/date";
 import { Key, useCallback } from "react";
+import LoanReturnButton from "./return-button";
+import LoanDeleteButton from "./delete-button";
 
 export default function LoanTable({ loans }: { loans: Loan[] }) {
   // id: string;
@@ -45,7 +47,16 @@ export default function LoanTable({ loans }: { loans: Loan[] }) {
   const renderCell = useCallback((loan: (typeof rows)[0], columnKey: Key) => {
     switch (columnKey) {
       case "action":
-        return <LoanUpdateButton loanId={loan.key} />;
+        return (
+          <div className="flex flex-row gap-2 w-full">
+            <LoanUpdateButton loanId={loan.key} />
+            {loan.status === "Dipinjam" && (
+              <LoanReturnButton loanId={loan.key} />
+            )}
+            {/* {loan.} */}
+            <LoanDeleteButton loanId={loan.key} />
+          </div>
+        );
       case "status":
         return loan.status;
       default:

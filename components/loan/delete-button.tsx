@@ -6,10 +6,10 @@ import { useRouter } from "next/navigation";
 import { Trash2Icon } from "lucide-react";
 
 interface Props {
-  bookId: string;
+  loanId: string;
 }
 
-export default function LoanDeleteButton({ bookId }: Props) {
+export default function LoanDeleteButton({ loanId }: Props) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState("");
@@ -23,7 +23,7 @@ export default function LoanDeleteButton({ bookId }: Props) {
     setMessage("");
 
     try {
-      const response = await fetch(`/api/loan?id=${bookId}`, {
+      const response = await fetch(`/api/loan?id=${loanId}`, {
         method: "DELETE",
       });
 

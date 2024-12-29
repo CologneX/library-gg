@@ -1,8 +1,8 @@
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import UpdateLoanForm from "./form";
 import { getAuth } from "@/app/api/auth/cookie";
 import { Metadata } from "next";
+import UpdateLoanForm from "./form";
 
 interface PageProps {
   params: {
@@ -36,20 +36,37 @@ async function getLoan(id: string) {
 export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
-  const collection = await getLoan(params.id);
+  const loan = await getLoan(params.id);
 
   return {
-    title: `Update Loan: ${collection.member.username}`,
+    title: `Update Loan: ${loan.member.username}`,
   };
 }
 
 export default async function UpdateLoanPage({ params }: PageProps) {
-  const { id } = await params;
-  const [{ member }, loan] = await Promise.all([getAuth(), getLoan(id)]);
+  const { member } = await getAuth();
 
   if (!member?.isAdmin) {
     notFound();
   }
 
-  return <UpdateLoanForm {...{ loan }} />;
+  const loan = await getLoan(params.id);
+
+  // Get available collections for adding to loan
+  const collections = await prisma.collection.findMany({
+    where: {
+      deletedAt: null,
+      availableCopies: { gt: 0 },
+    },
+    select: {
+      id: true,
+      title: true,
+      author: true,
+      publisher: true,
+      isbn: true,
+      availableCopies: true,
+    },
+  });
+
+  return <UpdateLoanForm loan={loan} collections={collections} />;
 }

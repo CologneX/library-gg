@@ -3,12 +3,20 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
 const CreateLoanSchema = z.object({
-    memberId: z.string().uuid(),
-    collectionIds: z.array(z.string().uuid()).min(1, {
+    memberId: z.string({
+        required_error: "Anggota harus dipilih",
+    }),
+    collectionIds: z.array(z.string()).min(1, {
         message: "Minimal harus meminjam 1 koleksi"
     }),
-    loanDate: z.coerce.date(),
-    returnDueDate: z.coerce.date(),
+    loanDate: z.coerce.date({
+        required_error: "Tanggal peminjaman harus diisi",
+    }),
+    returnDueDate: z.coerce.date({
+        required_error: "Tanggal pengembalian harus diisi",
+    }).refine((date) => date > new Date(), {
+        message: "Tanggal kembali harus lebih besar dari hari ini"
+    })
 });
 
 const UpdateLoanSchema = z.object({
@@ -102,6 +110,12 @@ export async function POST(request: NextRequest) {
     }
 }
 
+const UpdateLoanItemsSchema = z.object({
+    collectionIds: z.array(z.string()).min(1, {
+        message: "Minimal harus meminjam 1 koleksi"
+    })
+});
+
 export async function PATCH(request: NextRequest) {
     try {
         const { searchParams } = new URL(request.url);
@@ -115,9 +129,8 @@ export async function PATCH(request: NextRequest) {
         }
 
         const body = await request.json();
-        const validatedData = UpdateLoanSchema.parse(body);
+        const validatedData = UpdateLoanItemsSchema.parse(body);
 
-        // Start transaction
         return await prisma.$transaction(async (tx) => {
             // Get existing loan with items
             const existingLoan = await tx.loan.findFirst({
@@ -138,31 +151,87 @@ export async function PATCH(request: NextRequest) {
                 throw new Error("Peminjaman tidak ditemukan");
             }
 
-            // If returning books (status changes to returned)
-            if (validatedData.status === "returned" && existingLoan.status !== "returned") {
-                // Update available copies
+            // Get existing collection IDs
+            const existingCollectionIds = existingLoan.loanItems.map(item => item.collectionId);
+
+            // Find collections to add and remove
+            const collectionsToAdd = validatedData.collectionIds.filter(
+                id => !existingCollectionIds.includes(id)
+            );
+            const collectionsToRemove = existingCollectionIds.filter(
+                id => !validatedData.collectionIds.includes(id)
+            );
+
+            // Verify new collections are available
+            if (collectionsToAdd.length > 0) {
+                const newCollections = await tx.collection.findMany({
+                    where: {
+                        id: { in: collectionsToAdd },
+                        deletedAt: null,
+                        availableCopies: { gt: 0 }
+                    }
+                });
+
+                if (newCollections.length !== collectionsToAdd.length) {
+                    throw new Error("Beberapa koleksi tidak tersedia");
+                }
+
+                // Decrease available copies for new collections
                 await Promise.all(
-                    existingLoan.loanItems.map(item =>
+                    newCollections.map(collection =>
                         tx.collection.update({
-                            where: { id: item.collectionId },
+                            where: { id: collection.id },
+                            data: { availableCopies: collection.availableCopies - 1 }
+                        })
+                    )
+                );
+            }
+
+            // Increase available copies for removed collections
+            if (collectionsToRemove.length > 0) {
+                await Promise.all(
+                    collectionsToRemove.map(collectionId =>
+                        tx.collection.update({
+                            where: { id: collectionId },
                             data: {
-                                availableCopies: item.collection.availableCopies + 1
+                                availableCopies: {
+                                    increment: 1
+                                }
                             }
                         })
                     )
                 );
             }
 
-            // Update loan
-            const updatedLoan = await tx.loan.update({
+            // Delete removed loan items
+            if (collectionsToRemove.length > 0) {
+                await tx.loanItem.deleteMany({
+                    where: {
+                        loanId: id,
+                        collectionId: { in: collectionsToRemove }
+                    }
+                });
+            }
+
+            // Create new loan items
+            if (collectionsToAdd.length > 0) {
+                await tx.loanItem.createMany({
+                    data: collectionsToAdd.map(collectionId => ({
+                        loanId: id,
+                        collectionId
+                    }))
+                });
+            }
+
+            // Get updated loan
+            const updatedLoan = await tx.loan.findFirst({
                 where: { id },
-                data: {
-                    ...validatedData,
-                    // If return date is set, automatically set status to returned
-                    ...(validatedData.returnDate && { status: "returned" })
-                },
                 include: {
-                    loanItems: true
+                    loanItems: {
+                        include: {
+                            collection: true
+                        }
+                    }
                 }
             });
 
@@ -191,8 +260,6 @@ export async function PATCH(request: NextRequest) {
         }, { status: 500 });
     }
 }
-
-// ...existing code...
 
 export async function DELETE(request: NextRequest) {
     try {
