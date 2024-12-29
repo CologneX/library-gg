@@ -1,51 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
+import { CreateCollectionSchema, UpdateCollectionSchema } from "@/schema/schema";
 
-
-export const CreateCollectionSchema = z.object({
-    title: z.string().min(1, {
-        message: "Judul koleksi harus diisi"
-    }),
-    author: z.string().optional().nullable(),
-    publisher: z.string().optional().nullable(),
-    yearPublished: z.number().int().min(1000, {
-        message: "Tahun terbit tidak valid"
-    }).max(new Date().getFullYear(), {
-        message: "Tahun terbit tidak boleh melebihi tahun sekarang"
-    }).optional().nullable(),
-    isbn: z.string().regex(/^(?:\d{10}|\d{13})$/, {
-        message: "ISBN harus berupa 10 atau 13 digit angka"
-    }).optional().nullable(),
-    totalCopies: z.number().int().min(1, {
-        message: "Jumlah total copy minimal 1"
-    }).default(1),
-    availableCopies: z.number().int().min(0, {
-        message: "Jumlah copy tersedia tidak boleh negatif"
-    }).default(1),
-});
-
-const UpdateCollectionSchema = z.object({
-    title: z.string().min(1, {
-        message: "Judul koleksi harus diisi"
-    }).optional(),
-    author: z.string().optional().nullable(),
-    publisher: z.string().optional().nullable(),
-    yearPublished: z.number().int().min(1000, {
-        message: "Tahun terbit tidak valid"
-    }).max(new Date().getFullYear(), {
-        message: "Tahun terbit tidak boleh melebihi tahun sekarang"
-    }).optional().nullable(),
-    isbn: z.string().regex(/^(?:\d{10}|\d{13})$/, {
-        message: "ISBN harus berupa 10 atau 13 digit angka"
-    }).optional().nullable(),
-    totalCopies: z.number().int().min(1, {
-        message: "Jumlah total copy minimal 1"
-    }).optional(),
-    availableCopies: z.number().int().min(0, {
-        message: "Jumlah copy tersedia tidak boleh negatif"
-    }).optional(),
-});
 export async function POST(request: NextRequest) {
     try {
         const body = await request.json();

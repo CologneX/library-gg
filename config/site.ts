@@ -11,8 +11,8 @@ export const memberNavItems = [
     href: "/",
   },
   {
-    label: "Pinjaman",
-    href: "/loan",
+    label: "Pinjaman Saya",
+    href: "/myloan",
   },
 ];
 

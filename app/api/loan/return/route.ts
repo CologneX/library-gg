@@ -1,12 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
+import { ReturnLoanSchema } from "@/schema/schema";
 
-const ReturnLoanSchema = z.object({
-    loanId: z.string({
-        required_error: "ID peminjaman harus disertakan",
-    })
-});
 
 export async function POST(request: NextRequest) {
     try {

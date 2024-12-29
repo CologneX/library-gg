@@ -7,13 +7,16 @@ import Link from "next/link";
 import { Button } from "@nextui-org/button";
 import { PageProps } from "@/.next/types/app/page";
 
-export default async function LoanPage({ props }: { props: PageProps }) {
-  const { page } = await props.searchParams;
+export default async function LoanPage(props: {
+  searchParams: Promise<{ page?: string }>;
+}) {
+  const searchParams = await props.searchParams;
+
   const { member } = await getAuth();
-  if (!member) {
+  if (!member || !member.isAdmin) {
     return redirect("/login");
   }
-  const currentPage = Number(page) || 1;
+  const currentPage = Number(searchParams.page) || 1;
   const limit = 10;
   const skip = (currentPage - 1) * limit;
 
@@ -49,7 +52,7 @@ export default async function LoanPage({ props }: { props: PageProps }) {
       </div>
       <LoanTable {...{ loans }} />
       <div className="flex flex-row justify-end">
-        <PaginationComp page={currentPage} total={total} />
+        <PaginationComp page={currentPage} total={total} limit={limit} />
       </div>
     </section>
   );

@@ -1,28 +1,7 @@
 import { prisma } from "@/lib/prisma";
+import { CreateLoanSchema, UpdateLoanItemsSchema } from "@/schema/schema";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-
-const CreateLoanSchema = z.object({
-    memberId: z.string({
-        required_error: "Anggota harus dipilih",
-    }),
-    collectionIds: z.array(z.string()).min(1, {
-        message: "Minimal harus meminjam 1 koleksi"
-    }),
-    loanDate: z.coerce.date({
-        required_error: "Tanggal peminjaman harus diisi",
-    }),
-    returnDueDate: z.coerce.date({
-        required_error: "Tanggal pengembalian harus diisi",
-    }).refine((date) => date > new Date(), {
-        message: "Tanggal kembali harus lebih besar dari hari ini"
-    })
-});
-
-const UpdateLoanSchema = z.object({
-    returnDate: z.coerce.date().optional(),
-    status: z.enum(["ongoing", "returned", "overdue"]).optional(),
-});
 
 export async function POST(request: NextRequest) {
     try {
@@ -110,11 +89,6 @@ export async function POST(request: NextRequest) {
     }
 }
 
-const UpdateLoanItemsSchema = z.object({
-    collectionIds: z.array(z.string()).min(1, {
-        message: "Minimal harus meminjam 1 koleksi"
-    })
-});
 
 export async function PATCH(request: NextRequest) {
     try {
