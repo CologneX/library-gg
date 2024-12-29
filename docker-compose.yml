@@ -3,6 +3,7 @@ services:
     image: mysql:8.4.3
     container_name: mysql-library
     environment:
+      # YES I KNOW THIS IS NOT SECURE, BUT THIS IS A DEMO
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: library
       MYSQL_USER: admin
