@@ -1,8 +1,4 @@
-# Next.js & NextUI Template
-
-This is a template for creating applications using Next.js 14 (app directory) and NextUI (v2).
-
-[Try it on CodeSandbox](https://githubbox.com/nextui-org/next-app-template)
+# LibraryGG
 
 ## Technologies Used
 
@@ -14,22 +10,25 @@ This is a template for creating applications using Next.js 14 (app directory) an
 - [Framer Motion](https://www.framer.com/motion/)
 - [next-themes](https://github.com/pacocoursey/next-themes)
 
-## How to Use
+## How to Run
 
-### Use the template with create-next-app
+To run the project on your computer, run the following command:
 
-To create a new project based on this template using `create-next-app`, run the following command:
-
+### Install Dependencies
 ```bash
-npx create-next-app -e https://github.com/nextui-org/next-app-template
+npm i 
 ```
 
-### Install dependencies
-
-You can use one of them `npm`, `yarn`, `pnpm`, `bun`, Example using `npm`:
+### Init Docker (MySQL)
 
 ```bash
-npm install
+docker compose up -d
+```
+
+### Init Database (Prisma ORM)
+
+```bash
+npx prisma migrate dev --name init
 ```
 
 ### Run the development server
@@ -37,16 +36,6 @@ npm install
 ```bash
 npm run dev
 ```
-
-### Setup pnpm (optional)
-
-If you are using `pnpm`, you need to add the following code to your `.npmrc` file:
-
-```bash
-public-hoist-pattern[]=*@nextui-org/*
-```
-
-After modifying the `.npmrc` file, you need to run `pnpm install` again to ensure that the dependencies are installed correctly.
 
 ## License
 
