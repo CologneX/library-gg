@@ -25,6 +25,12 @@ npm i
 docker compose up -d
 ```
 
+### Init Database (Prisma ORM)
+
+```bash
+npx prisma migrate dev --name init
+```
+
 ### Run the development server
 
 ```bash
