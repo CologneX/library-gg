@@ -10,6 +10,14 @@ const prismaClientSingleton = () => {
                     }
                     return query(args)
                 }
+            },
+            collection: {
+                async $allOperations({ model, operation, args, query }) {
+                    if (operation === 'findMany' || operation == "findUnique") {
+                        args.where = { ...args.where, deletedAt: null }
+                    }
+                    return query(args)
+                }
             }
         }
     })

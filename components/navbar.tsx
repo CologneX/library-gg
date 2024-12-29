@@ -81,7 +81,7 @@ export const Navbar = async () => {
         <NavbarItem className="hidden sm:flex gap-2">
           <ThemeSwitch />
         </NavbarItem>
-        <NavbarItem className="hidden lg:flex">{searchInput}</NavbarItem>
+        {/* <NavbarItem className="hidden lg:flex">{searchInput}</NavbarItem> */}
         <NavbarItem className="hidden md:flex">
           {member ? (
             <ProfileButton {...{ member }} />
@@ -105,7 +105,7 @@ export const Navbar = async () => {
       </NavbarContent>
 
       <NavbarMenu>
-        {searchInput}
+        {/* {searchInput} */}
         <div className="mx-4 mt-2 flex flex-col gap-2">
           {navItems.map((item, index) => (
             <NavbarMenuItem key={`${item}-${index}`}>

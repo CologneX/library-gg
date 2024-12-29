@@ -1,20 +1,47 @@
-import BooksPagination from "@/components/collection/books-pagination";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { getAuth } from "@/app/api/auth/cookie";
-import BooksGrid from "@/components/collection/books-grid";
 import LoanTable from "@/components/loan/table";
-import LoanPagination from "@/components/loan/pagination";
+import PaginationComp from "@/components/pagination";
 import Link from "next/link";
 import { Button } from "@nextui-org/button";
 
-export default async function LoanPage() {
+export default async function LoanPage({
+  searchParams,
+}: {
+  searchParams: { page?: string };
+}) {
   const { member } = await getAuth();
   if (!member) {
     return redirect("/login");
   }
-  // return data and the count of loans
-  const loans = await prisma.loan.findMany();
+  const currentPage = Number(searchParams.page) || 1;
+  const limit = 10;
+  const skip = (currentPage - 1) * limit;
+
+  const [loans, total] = await Promise.all([
+    prisma.loan.findMany({
+      include: {
+        member: true,
+        loanItems: {
+          include: {
+            collection: true,
+          },
+        },
+      },
+      take: limit,
+      skip,
+      orderBy: {
+        loanDate: "desc",
+      },
+    }),
+    prisma.loan.count({
+      where: {
+        deletedAt: null,
+      },
+    }),
+  ]);
+
   return (
     <section className="flex flex-col h-full pb-4 gap-4 w-full">
       <div className="text-end">
@@ -24,7 +51,7 @@ export default async function LoanPage() {
       </div>
       <LoanTable {...{ loans }} />
       <div className="flex flex-row justify-end">
-        <LoanPagination page={1} total={1000} />
+        <PaginationComp page={currentPage} total={total} />
       </div>
     </section>
   );
