@@ -5,8 +5,7 @@ import { validateSession } from "./session";
 export const SESSION_COOKIE_NAME = "session";
 
 export const setSessionCookie = async (
-  sessionToken: string,
-  expiresAt: Date,
+  sessionToken: string, expiresAt: Date
 ) => {
   const cookie = {
     name: SESSION_COOKIE_NAME,

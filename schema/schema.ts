@@ -114,3 +114,27 @@ export const UpdateLoanItemsSchema = z.object({
     message: "Minimal harus meminjam 1 koleksi",
   }),
 });
+
+export const loginSchema = z.object({
+  username: z.string().min(1, "Username dibutuhkan"),
+  password: z.string().min(1, "Password dibutuhkan"),
+});
+
+export type LoginInput = z.infer<typeof loginSchema>;
+
+export const registerSchema = z.object({
+  username: z.string().min(1, {
+    message: "Username tidak boleh kosong",
+  }),
+  password: z.string().min(6, {
+    message: "Password minimal 6 karakter",
+  }),
+  confirmPassword: z.string().min(1, {
+    message: "Konfirmasi password tidak boleh kosong",
+  }),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Password tidak sama",
+  path: ["confirmPassword"],
+});
+
+export type RegisterInput = z.infer<typeof registerSchema>;
