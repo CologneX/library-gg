@@ -44,22 +44,25 @@ export const UpdateCollectionSchema = z.object({
     }).optional(),
 });
 
-export const CreateLoanSchema = z.object({
-    memberId: z.string({
-        required_error: "Anggota harus dipilih",
-    }),
-    collectionIds: z.array(z.string()).min(1, {
-        message: "Minimal harus meminjam 1 koleksi"
-    }),
-    loanDate: z.coerce.date({
-        required_error: "Tanggal peminjaman harus diisi",
-    }),
-    returnDueDate: z.coerce.date({
-        required_error: "Tanggal pengembalian harus diisi",
-    }).refine((date) => date > new Date(), {
-        message: "Tanggal kembali harus lebih besar dari hari ini"
+export const CreateLoanSchema = z
+    .object({
+        memberId: z.string({
+            required_error: "Anggota harus dipilih",
+        }),
+        collectionIds: z.array(z.string()).min(1, {
+            message: "Minimal harus meminjam 1 koleksi"
+        }),
+        loanDate: z.coerce.date({
+            required_error: "Tanggal peminjaman harus diisi",
+        }),
+        returnDueDate: z.coerce.date({
+            required_error: "Tanggal pengembalian harus diisi",
+        }),
     })
-});
+    .refine((data) => data.returnDueDate > data.loanDate, {
+        message: "Tanggal kembali harus lebih besar daripada tanggal pinjam",
+        path: ["returnDueDate"]
+    });
 
 export const ReturnLoanSchema = z.object({
     loanId: z.string({
