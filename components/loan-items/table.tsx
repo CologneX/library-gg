@@ -81,7 +81,7 @@
 // }
 
 "use client";
-import { Collection, LoanItem } from "@prisma/client";
+import { Collection, LoanItem } from "@/prisma/generated/client";
 import {
   Table,
   TableBody,

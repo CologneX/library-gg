@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { Button } from "@nextui-org/button";
+import { Button } from "@nextui-org/react";
 
 import { prisma } from "@/lib/prisma";
 import { getAuth } from "@/app/api/auth/cookie";

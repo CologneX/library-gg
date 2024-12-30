@@ -1,0 +1,92 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "./generated/client"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum LoanStatus {
+  ongoing
+  returned
+  overdue
+}
+
+model Member {
+  id           String    @id @default(uuid()) @map("member_id")
+  username     String    @unique @db.VarChar(50)
+  passwordHash String    @map("password_hash") @db.VarChar(255)
+  isAdmin      Boolean   @default(false) @map("is_admin")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  editedAt     DateTime? @updatedAt @map("edited_at")
+  deletedAt    DateTime? @map("deleted_at")
+  loans        Loan[]
+  sessions     Session[]
+
+  @@index([username])
+  @@index([deletedAt])
+}
+
+model Collection {
+  id              String     @id @default(uuid()) @map("collection_id")
+  title           String     @db.VarChar(255)
+  author          String?    @db.VarChar(255)
+  publisher       String?    @db.VarChar(255)
+  yearPublished   Int?       @map("year_published") @db.SmallInt
+  isbn            String?    @unique @db.VarChar(20)
+  totalCopies     Int        @default(1) @map("total_copies")
+  availableCopies Int        @default(1) @map("available_copies")
+  createdAt       DateTime   @default(now()) @map("created_at")
+  editedAt        DateTime?  @updatedAt @map("edited_at")
+  deletedAt       DateTime?  @map("deleted_at")
+  loanItems       LoanItem[]
+
+  @@index([title])
+  @@index([isbn])
+  @@index([author])
+  @@index([deletedAt])
+}
+
+model Loan {
+  id            String     @id @default(uuid()) @map("loan_id")
+  memberId      String     @map("member_id")
+  loanDate      DateTime   @map("loan_date") @db.Date
+  returnDueDate DateTime   @map("return_due_date") @db.Date
+  returnDate    DateTime?  @map("return_date") @db.Date
+  status        LoanStatus @default(ongoing)
+  createdAt     DateTime   @default(now()) @map("created_at")
+  editedAt      DateTime?  @updatedAt @map("edited_at")
+  deletedAt     DateTime?  @map("deleted_at")
+  member        Member     @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  loanItems     LoanItem[]
+
+  @@index([status])
+  @@index([returnDueDate])
+  @@index([memberId, status])
+  @@index([deletedAt])
+}
+
+model LoanItem {
+  id           String     @id @default(uuid()) @map("loan_item_id")
+  loanId       String     @map("loan_id")
+  collectionId String     @map("collection_id")
+  createdAt    DateTime   @default(now()) @map("created_at")
+  editedAt     DateTime?  @updatedAt @map("edited_at")
+  deletedAt    DateTime?  @map("deleted_at")
+  loan         Loan       @relation(fields: [loanId], references: [id], onDelete: Cascade)
+  collection   Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+
+  @@index([loanId, collectionId])
+  @@index([deletedAt])
+}
+
+model Session {
+  id        String   @id @map("session_id")
+  expiresAt DateTime @map("expires_at")
+  memberId  String   @map("member_id")
+  member    Member   @relation(fields: [memberId], references: [id], onDelete: Cascade)
+
+  @@index([memberId])
+}

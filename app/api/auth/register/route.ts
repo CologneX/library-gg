@@ -1,13 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import { Prisma } from "@prisma/client";
 import { z } from "zod";
-
 import { setSessionCookie } from "../cookie";
 import { hashPassword } from "../password";
 import { generateRandomSessionToken, createSession } from "../session";
 
 import { registerSchema } from "@/schema/schema";
 import { prisma } from "@/lib/prisma";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 
 export async function POST(request: NextRequest) {
   try {
@@ -51,7 +50,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+    if (error instanceof PrismaClientKnownRequestError) {
       if (error.code === "P2002") {
         return NextResponse.json(
           { error: "Username sudah digunakan" },

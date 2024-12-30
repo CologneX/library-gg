@@ -1,5 +1,4 @@
 "use client";
-import { Loan } from "@prisma/client";
 import {
   Table,
   TableBody,
@@ -15,6 +14,7 @@ import LoanReturnButton from "./return-button";
 import LoanDeleteButton from "./delete-button";
 
 import { formatDate } from "@/lib/date";
+import { Loan } from "@/prisma/generated/client";
 
 export default function LoanTable({ loans }: { loans: Loan[] }) {
   // id: string;

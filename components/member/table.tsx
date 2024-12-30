@@ -1,5 +1,4 @@
 "use client";
-import { Member } from "@prisma/client";
 import {
   Table,
   TableHeader,
@@ -13,6 +12,7 @@ import {
 import MemberDeleteButton from "./delete-button";
 
 import { formatDate } from "@/lib/date";
+import { Member } from "@/prisma/generated/client";
 
 interface Props {
   members: Pick<

@@ -3,9 +3,9 @@ import {
   encodeBase32LowerCaseNoPadding,
   encodeHexLowerCase,
 } from "@oslojs/encoding";
-import { Session } from "@prisma/client";
 
 import { prisma } from "@/lib/prisma";
+import { Session } from "@/prisma/generated/client";
 
 export const generateRandomSessionToken = () => {
   const bytes = new Uint8Array(20);

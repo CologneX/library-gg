@@ -1,5 +1,4 @@
 "use client";
-import { Collection, Loan, LoanItem, Member } from "@prisma/client";
 import {
   Button,
   Card,
@@ -23,6 +22,7 @@ import { Trash2Icon } from "lucide-react";
 
 import { formatDate } from "@/lib/date";
 import { ApiError } from "@/types/api";
+import { Collection, Loan, LoanItem, Member } from "@/prisma/generated/client";
 
 type LoanWithRelations = Loan & {
   member: Member;

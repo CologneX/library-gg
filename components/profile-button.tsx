@@ -1,17 +1,17 @@
 "use client";
 
-import { Button } from "@nextui-org/button";
+import { Button } from "@nextui-org/react";
 import {
   Dropdown,
   DropdownTrigger,
   DropdownMenu,
   DropdownItem,
 } from "@nextui-org/react";
-import { Member } from "@prisma/client";
 
 import { HeartFilledIcon } from "./icons";
 
 import { signOut } from "@/app/api/auth/actions/sign-out";
+import { Member } from "@/prisma/generated/client";
 
 export default function ProfileButton({ member }: { member: Member }) {
   return (

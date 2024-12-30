@@ -1,5 +1,4 @@
 "use client";
-import { Collection, Member } from "@prisma/client";
 import {
   Button,
   Card,
@@ -24,6 +23,7 @@ import { I18nProvider } from "@react-aria/i18n";
 import { Trash2Icon } from "lucide-react";
 
 import { ApiError } from "@/types/api";
+import { Collection, Member } from "@/prisma/generated/client";
 
 interface Props {
   members: Pick<Member, "id" | "username">[];

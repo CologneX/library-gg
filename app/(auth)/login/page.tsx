@@ -1,14 +1,14 @@
 "use client";
-import { Button } from "@nextui-org/button";
-import { Input } from "@nextui-org/input";
 import {
   Alert,
+  Button,
   Card,
   CardBody,
   CardFooter,
   CardHeader,
   Divider,
   Form,
+  Input,
 } from "@nextui-org/react";
 import { cn } from "@nextui-org/theme";
 import Link from "next/link";

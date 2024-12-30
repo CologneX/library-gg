@@ -1,5 +1,4 @@
 "use client";
-import { Collection, Loan, LoanItem } from "@prisma/client";
 import {
   Table,
   TableHeader,
@@ -11,6 +10,7 @@ import {
 } from "@nextui-org/react";
 
 import { formatDate } from "@/lib/date";
+import { Collection, Loan, LoanItem } from "@/prisma/generated/client";
 
 type LoanWithRelations = Loan & {
   loanItems: (LoanItem & {
