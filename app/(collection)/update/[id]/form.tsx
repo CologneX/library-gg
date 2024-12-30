@@ -8,18 +8,18 @@ import {
   CardHeader,
   Input,
 } from "@nextui-org/react";
-import { Collection } from "@prisma/client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { title } from "@/components/primitives";
 import { ApiError } from "@/types/api";
+import { Collection } from "@prisma/client";
 
-interface Props {
+export default function UpdateCollectionForm({
+  collection,
+}: {
   collection: Collection;
-}
-
-export default function UpdateCollectionForm({ collection }: Props) {
+}) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<ApiError[]>([]);
