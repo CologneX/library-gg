@@ -1,5 +1,4 @@
 "use client";
-import { LoginInput, loginSchema } from "@/schema/schema";
 import { Button } from "@nextui-org/button";
 import { Input } from "@nextui-org/input";
 import {
@@ -16,6 +15,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { z } from "zod";
+
+import { LoginInput, loginSchema } from "@/schema/schema";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -50,6 +51,7 @@ export default function LoginPage() {
 
       if (!response.ok) {
         setError(result.error);
+
         return;
       }
 
@@ -58,8 +60,10 @@ export default function LoginPage() {
     } catch (err) {
       if (err instanceof z.ZodError) {
         const errors: Partial<Record<keyof LoginInput, string>> = {};
+
         err.errors.forEach((error) => {
           const path = error.path[0] as keyof LoginInput;
+
           errors[path] = error.message;
         });
         setValidation(errors);
@@ -87,28 +91,28 @@ export default function LoginPage() {
           )}
           <Input
             isRequired
-            isInvalid={!!validation.username}
+            disabled={loading}
             errorMessage={validation.username}
+            isInvalid={!!validation.username}
             label="Username"
             labelPlacement="outside"
             name="username"
             placeholder="Username"
-            disabled={loading}
           />
           <Input
             isRequired
-            isInvalid={!!validation.password}
+            disabled={loading}
             errorMessage={validation.password}
+            isInvalid={!!validation.password}
             label="Password"
             labelPlacement="outside"
             name="password"
             placeholder="Password"
             type="password"
-            disabled={loading}
           />
         </CardBody>
         <CardFooter className="flex flex-col gap-2">
-          <Button fullWidth type="submit" isLoading={loading}>
+          <Button fullWidth isLoading={loading} type="submit">
             Masuk
           </Button>
           <Divider />

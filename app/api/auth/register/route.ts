@@ -1,11 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
-import { registerSchema } from "@/schema/schema";
 import { z } from "zod";
+
 import { setSessionCookie } from "../cookie";
 import { hashPassword } from "../password";
 import { generateRandomSessionToken, createSession } from "../session";
+
+import { registerSchema } from "@/schema/schema";
+import { prisma } from "@/lib/prisma";
 
 export async function POST(request: NextRequest) {
   try {
@@ -25,19 +27,18 @@ export async function POST(request: NextRequest) {
     const sessionToken = generateRandomSessionToken();
     const session = await createSession(sessionToken, member.id);
 
-    const response = NextResponse.json(
-      { success: true },
-      { status: 201 }
-    );
+    const response = NextResponse.json({ success: true }, { status: 201 });
 
     await setSessionCookie(sessionToken, session.expiresAt);
-    return response;
 
+    return response;
   } catch (error) {
     if (error instanceof z.ZodError) {
       const errors: Record<string, string[]> = {};
+
       error.errors.forEach((err) => {
         const field = err.path[0].toString();
+
         if (!errors[field]) {
           errors[field] = [];
         }
@@ -46,22 +47,22 @@ export async function POST(request: NextRequest) {
 
       return NextResponse.json(
         { error: "Validation failed", validationErrors: errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
-      if (error.code === 'P2002') {
+      if (error.code === "P2002") {
         return NextResponse.json(
           { error: "Username sudah digunakan" },
-          { status: 409 }
+          { status: 409 },
         );
       }
     }
 
     return NextResponse.json(
       { error: "An unexpected error occurred" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

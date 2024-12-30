@@ -13,13 +13,11 @@ import { useRouter } from "next/navigation";
 
 import { title } from "@/components/primitives";
 import { ApiError } from "@/types/api";
-import { Collection } from ".prisma/client";
-
 
 export default function UpdateCollectionForm({
   collection,
 }: {
-  collection: Collection;
+  collection: any;
 }) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);

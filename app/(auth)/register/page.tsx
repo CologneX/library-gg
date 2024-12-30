@@ -1,5 +1,4 @@
 "use client";
-import { RegisterInput, registerSchema } from "@/schema/schema";
 import { Button } from "@nextui-org/button";
 import { Input } from "@nextui-org/input";
 import {
@@ -9,13 +8,14 @@ import {
   CardFooter,
   CardHeader,
   Form,
-  Spinner,
 } from "@nextui-org/react";
 import { cn } from "@nextui-org/theme";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { z } from "zod";
+
+import { RegisterInput, registerSchema } from "@/schema/schema";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -52,17 +52,19 @@ export default function RegisterPage() {
       if (!response.ok) {
         if (response.status === 400 && result.validationErrors) {
           const errors: Partial<Record<keyof RegisterInput, string>> = {};
+
           Object.entries(result.validationErrors).forEach(
             ([field, messages]) => {
               errors[field as keyof RegisterInput] = Array.isArray(messages)
                 ? messages[0]
                 : messages;
-            }
+            },
           );
           setValidation(errors);
         } else {
           setError(result.error);
         }
+
         return;
       }
 
@@ -71,8 +73,10 @@ export default function RegisterPage() {
     } catch (err) {
       if (err instanceof z.ZodError) {
         const errors: Partial<Record<keyof RegisterInput, string>> = {};
+
         err.errors.forEach((error) => {
           const path = error.path[0] as keyof RegisterInput;
+
           errors[path] = error.message;
         });
         setValidation(errors);
@@ -102,39 +106,39 @@ export default function RegisterPage() {
           )}
           <Input
             isRequired
-            isInvalid={!!validation.username}
+            disabled={loading}
             errorMessage={validation.username}
+            isInvalid={!!validation.username}
             label="Username"
             labelPlacement="outside"
             name="username"
             placeholder="Username"
-            disabled={loading}
           />
           <Input
             isRequired
-            isInvalid={!!validation.password}
+            disabled={loading}
             errorMessage={validation.password}
+            isInvalid={!!validation.password}
             label="Password"
             labelPlacement="outside"
             name="password"
             placeholder="Password"
             type="password"
-            disabled={loading}
           />
           <Input
             isRequired
-            isInvalid={!!validation.confirmPassword}
+            disabled={loading}
             errorMessage={validation.confirmPassword}
+            isInvalid={!!validation.confirmPassword}
             label="Confirm Password"
             labelPlacement="outside"
             name="confirmPassword"
             placeholder="Password"
             type="password"
-            disabled={loading}
           />
         </CardBody>
         <CardFooter className="flex flex-col gap-2">
-          <Button fullWidth type="submit" isLoading={loading}>
+          <Button fullWidth isLoading={loading} type="submit">
             Daftar
           </Button>
           <Link className="text-xs text-primary" href="/login">

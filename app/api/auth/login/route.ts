@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
+
 import { setSessionCookie } from "../cookie";
 import { verifyPasswordHash } from "../password";
 import { generateRandomSessionToken, createSession } from "../session";
+
 import { prisma } from "@/lib/prisma";
 import { loginSchema } from "@/schema/schema";
-import { z } from "zod";
 
 export async function POST(request: NextRequest) {
   try {
@@ -23,19 +25,19 @@ export async function POST(request: NextRequest) {
     if (!member) {
       return NextResponse.json(
         { error: "Username atau password salah" },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
     const validPassword = await verifyPasswordHash(
       member.passwordHash,
-      validatedData.password
+      validatedData.password,
     );
 
     if (!validPassword) {
       return NextResponse.json(
         { error: "Username atau password salah" },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -44,28 +46,26 @@ export async function POST(request: NextRequest) {
 
     const response = NextResponse.json(
       { success: true, message: "Login berhasil" },
-      { status: 200 }
+      { status: 200 },
     );
 
     await setSessionCookie(sessionToken, session.expiresAt);
-    return response;
 
+    return response;
   } catch (error) {
     console.error(error);
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: error.errors[0].message },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return NextResponse.json(
       {
-        error: error instanceof Error ?
-          error.message
-          : "Terjadi kesalahan"
+        error: error instanceof Error ? error.message : "Terjadi kesalahan",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
