@@ -1,7 +1,7 @@
 "use client";
-import Image from "next/image";
 import { useState } from "react";
-import { Spinner } from "@nextui-org/react";
+import { Image } from "@nextui-org/react";
+import NextImage from "next/image";
 
 interface Props {
   isbn?: string | null;
@@ -9,7 +9,6 @@ interface Props {
 }
 
 export default function BookCover({ isbn, title }: Props) {
-  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(false);
 
   const myLoader = ({ src }: { src: string }) => {
@@ -18,31 +17,24 @@ export default function BookCover({ isbn, title }: Props) {
 
   if (error || !isbn) {
     return (
-      <div className="relative w-full aspect-[1.5/1] bg-default-100 rounded-lg overflow-hidden flex items-center justify-center">
+      <div className="relative w-full aspect-[1/2] bg-default-100 rounded-lg overflow-hidden flex items-center justify-center">
         <p className="text-default-500">No Cover</p>
       </div>
     );
   }
 
   return (
-    <div className="relative w-full aspect-[1/1.5] bg-default-100 rounded-lg overflow-hidden">
-      {isLoading && (
-        <div className="absolute inset-0 flex items-center justify-center">
-          <Spinner color="primary" />
-        </div>
-      )}
+    <div className="relative w-full aspect-[1/2] bg-default-100 rounded-lg overflow-hidden">
       <Image
-        fill
+        // loader={myLoader}
         alt={`Cover of ${title}`}
-        className="object-cover"
-        loader={myLoader}
-        sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 20vw"
+        as={NextImage}
+        width={768}
+        height={480}
         src={`https://covers.openlibrary.org/b/isbn/${isbn}-M.jpg`}
         onError={() => {
-          setIsLoading(false);
           setError(true);
         }}
-        onLoadingComplete={() => setIsLoading(false)}
       />
     </div>
   );
