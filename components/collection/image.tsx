@@ -29,9 +29,9 @@ export default function BookCover({ isbn, title }: Props) {
         // loader={myLoader}
         alt={`Cover of ${title}`}
         as={NextImage}
-        width={768}
         height={480}
         src={`https://covers.openlibrary.org/b/isbn/${isbn}-M.jpg`}
+        width={768}
         onError={() => {
           setError(true);
         }}
