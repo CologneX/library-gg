@@ -21,15 +21,15 @@ const prismaClientSingleton = () => {
           return query(args);
         },
       },
-      member: {
-        async $allOperations({ model, operation, args, query }) {
-          if (operation === "findMany" || operation == "findUnique") {
-            args.where = { ...args.where, deletedAt: null };
-          }
+      // member: {
+      //   async $allOperations({ model, operation, args, query }) {
+      //     if (operation === "findMany" || operation == "findUnique") {
+      //       args.where = { ...args.where, deletedAt: null };
+      //     }
 
-          return query(args);
-        },
-      },
+      //     return query(args);
+      //   },
+      // },
     },
   });
 

@@ -11,7 +11,6 @@
   },
   "dependencies": {
     "@internationalized/date": "^3.6.0",
-    "@next-auth/prisma-adapter": "^1.0.7",
     "@nextui-org/button": "2.2.3",
     "@nextui-org/card": "^2.2.8",
     "@nextui-org/code": "2.2.3",
@@ -79,7 +78,6 @@
     "ts-node": "^10.9.2",
     "tsx": "^4.19.2",
     "typescript": "^5.6.3",
-    "vite-tsconfig-paths": "^5.1.4",
-    "vitest": "^2.1.8"
+    "vite-tsconfig-paths": "^5.1.4"
   }
 }

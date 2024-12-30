@@ -18,7 +18,7 @@ export default async function BooksGrid({
   return (
     <div className="gap-4 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
       {collection.map((book) => (
-        <Card key={book.id} className="flex flex-col gap-2">
+        <Card key={book.id} className="flex flex-col gap-2" isHoverable>
           <BookCover {...{ isbn: book.isbn, title: book.title }} />
           <CardBody>
             <div className="flex flex-col text-start">
