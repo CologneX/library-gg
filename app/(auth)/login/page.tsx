@@ -11,6 +11,7 @@ import {
 } from "@nextui-org/react";
 import { cn } from "@nextui-org/theme";
 import Link from "next/link";
+
 import { signIn } from "../../api/auth/actions/signIn";
 
 export default function LoginPage() {
@@ -19,32 +20,32 @@ export default function LoginPage() {
       <CardHeader>
         <h1 className={cn("text-3xl font-bold text-center")}>Masuk</h1>
       </CardHeader>
-      <Form validationBehavior="native" action={signIn}>
+      <Form action={signIn} validationBehavior="native">
         <CardBody className="flex flex-col gap-2">
           <Input
-            placeholder="Username"
-            name="username"
             isRequired
             errorMessage="Please enter a valid Username"
             label="Username"
             labelPlacement="outside"
+            name="username"
+            placeholder="Username"
           />
           <Input
-            placeholder="Password"
-            name="password"
             isRequired
             errorMessage="Please enter a valid Password"
             label="Password"
             labelPlacement="outside"
+            name="password"
+            placeholder="Password"
             type="password"
           />
         </CardBody>
         <CardFooter className="flex flex-col gap-2">
-          <Button type="submit" fullWidth>
+          <Button fullWidth type="submit">
             Masuk
           </Button>
           <Divider />
-          <Link href="/register" className="text-xs text-primary">
+          <Link className="text-xs text-primary" href="/register">
             Bukan member? Daftar
           </Link>
         </CardFooter>

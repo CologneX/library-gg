@@ -1,1 +1,3 @@
-export interface PageParam { params: Promise<{ id: string }> }
+export interface PageParam {
+  params: Promise<{ id: string }>;
+}

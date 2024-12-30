@@ -9,6 +9,7 @@ import {
   TableCell,
   Chip,
 } from "@nextui-org/react";
+
 import { formatDate } from "@/lib/date";
 
 type LoanWithRelations = Loan & {
@@ -50,7 +51,7 @@ export function LoanTable({ loans }: { loans: LoanWithRelations[] | null }) {
               : "Dikembalikan"}
         </Chip>
       ),
-    }))
+    })),
   );
 
   return (
@@ -58,7 +59,7 @@ export function LoanTable({ loans }: { loans: LoanWithRelations[] | null }) {
       <TableHeader columns={columns}>
         {(column) => <TableColumn key={column.key}>{column.label}</TableColumn>}
       </TableHeader>
-      <TableBody items={rows} emptyContent="Tidak ada peminjaman aktif">
+      <TableBody emptyContent="Tidak ada peminjaman aktif" items={rows}>
         {(item) => (
           <TableRow key={item.key}>
             {(columnKey) => (

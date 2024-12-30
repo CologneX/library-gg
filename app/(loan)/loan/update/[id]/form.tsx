@@ -15,13 +15,13 @@ import {
   TableRow,
   TableCell,
   Chip,
-  Divider,
   Alert,
 } from "@nextui-org/react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { formatDate } from "@/lib/date";
 import { Trash2Icon } from "lucide-react";
+
+import { formatDate } from "@/lib/date";
 import { ApiError } from "@/types/api";
 
 type LoanWithRelations = Loan & {
@@ -59,7 +59,7 @@ export default function UpdateLoanForm({ loan, collections }: Props) {
       author: item.collection.author || "",
       publisher: item.collection.publisher || "",
       isbn: item.collection.isbn || "",
-    }))
+    })),
   );
 
   const getFieldError = (fieldName: string) => {
@@ -67,12 +67,13 @@ export default function UpdateLoanForm({ loan, collections }: Props) {
   };
 
   const availableCollections = collections.filter(
-    (c) => !selectedCollections.find((sc) => sc.id === c.id)
+    (c) => !selectedCollections.find((sc) => sc.id === c.id),
   );
 
   const handleAddCollection = (keys: any) => {
     const collectionId = Array.from(keys)[0];
     const collection = collections.find((c) => c.id === collectionId);
+
     if (collection) {
       setSelectedCollections([
         ...selectedCollections,
@@ -90,7 +91,7 @@ export default function UpdateLoanForm({ loan, collections }: Props) {
 
   const handleRemoveCollection = (collectionId: string) => {
     setSelectedCollections(
-      selectedCollections.filter((c) => c.id !== collectionId)
+      selectedCollections.filter((c) => c.id !== collectionId),
     );
   };
 
@@ -119,6 +120,7 @@ export default function UpdateLoanForm({ loan, collections }: Props) {
       ]);
       setMessage("Data tidak valid");
       setIsLoading(false);
+
       return;
     }
     const data = {
@@ -143,6 +145,7 @@ export default function UpdateLoanForm({ loan, collections }: Props) {
       if (!response.ok) {
         setErrors(result.errors || []);
         setMessage(result.message);
+
         return;
       }
 
@@ -165,8 +168,8 @@ export default function UpdateLoanForm({ loan, collections }: Props) {
         {message && (
           <Alert
             color={errors.length > 0 ? "warning" : "success"}
-            title={errors.length > 0 ? "Gagal" : "Berhasil"}
             description={message}
+            title={errors.length > 0 ? "Gagal" : "Berhasil"}
           />
         )}
         <div className="grid grid-cols-2 gap-4 w-full">
@@ -200,16 +203,16 @@ export default function UpdateLoanForm({ loan, collections }: Props) {
 
         <div className="space-y-2">
           <Select
+            errorMessage={getFieldError("collectionIds")}
+            isInvalid={!!getFieldError("collectionIds")}
             label="Tambah Koleksi"
             onSelectionChange={(keys) => handleAddCollection(new Set(keys))}
-            isInvalid={!!getFieldError("collectionIds")}
-            errorMessage={getFieldError("collectionIds")}
           >
             {availableCollections.map((collection) => (
               <SelectItem
                 key={collection.id}
-                value={collection.id}
                 textValue={collection.title}
+                value={collection.id}
               >
                 {collection.title}{" "}
                 <span className="text-sm text-default-500">
@@ -236,9 +239,9 @@ export default function UpdateLoanForm({ loan, collections }: Props) {
                   <TableCell>{collection.isbn}</TableCell>
                   <TableCell>
                     <Button
+                      isIconOnly
                       color="danger"
                       size="sm"
-                      isIconOnly
                       onPress={() => handleRemoveCollection(collection.id)}
                     >
                       <Trash2Icon className="size-4" />
@@ -253,10 +256,10 @@ export default function UpdateLoanForm({ loan, collections }: Props) {
 
       <CardFooter>
         <Button
-          color="primary"
-          isLoading={isLoading}
           fullWidth
+          color="primary"
           isDisabled={selectedCollections.length === 0}
+          isLoading={isLoading}
           onPress={handleSubmit}
         >
           Simpan Perubahan

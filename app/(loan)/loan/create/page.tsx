@@ -1,7 +1,9 @@
+import { redirect } from "next/navigation";
+
+import CreateLoanForm from "./form";
+
 import { getAuth } from "@/app/api/auth/cookie";
 import { prisma } from "@/lib/prisma";
-import { redirect } from "next/navigation";
-import CreateLoanForm from "./form";
 
 export default async function CreateLoanPage() {
   const { member } = await getAuth();
@@ -30,5 +32,5 @@ export default async function CreateLoanPage() {
     },
   });
 
-  return <CreateLoanForm members={members} collections={collections} />;
+  return <CreateLoanForm collections={collections} members={members} />;
 }

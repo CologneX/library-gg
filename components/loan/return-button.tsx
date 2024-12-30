@@ -36,10 +36,10 @@ export default function LoanReturnButton({ loanId }: { loanId: string }) {
 
   return (
     <Button
-      color="success"
-      size="sm"
       className="grow"
+      color="success"
       isLoading={isLoading}
+      size="sm"
       onPress={handleReturn}
     >
       Kembalikan

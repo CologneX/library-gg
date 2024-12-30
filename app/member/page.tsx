@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+
 import { prisma } from "@/lib/prisma";
 import { getAuth } from "@/app/api/auth/cookie";
 import MemberTable from "@/components/member/table";
@@ -9,6 +10,7 @@ export default async function MemberPage(props: {
 }) {
   const searchParams = await props.searchParams;
   const { member } = await getAuth();
+
   if (!member?.isAdmin || !member) {
     return redirect("/");
   }
@@ -39,7 +41,7 @@ export default async function MemberPage(props: {
     <section className="flex flex-col h-full pb-4 gap-4 w-full">
       <MemberTable members={members} />
       <div className="mt-auto flex flex-row justify-end">
-        <PaginationComp page={currentPage} total={total} limit={limit} />
+        <PaginationComp limit={limit} page={currentPage} total={total} />
       </div>
     </section>
   );

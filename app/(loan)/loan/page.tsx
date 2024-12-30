@@ -1,11 +1,11 @@
 import { redirect } from "next/navigation";
+import Link from "next/link";
+import { Button } from "@nextui-org/button";
+
 import { prisma } from "@/lib/prisma";
 import { getAuth } from "@/app/api/auth/cookie";
 import LoanTable from "@/components/loan/table";
 import PaginationComp from "@/components/pagination";
-import Link from "next/link";
-import { Button } from "@nextui-org/button";
-import { PageProps } from "@/.next/types/app/page";
 
 export default async function LoanPage(props: {
   searchParams: Promise<{ page?: string }>;
@@ -13,6 +13,7 @@ export default async function LoanPage(props: {
   const searchParams = await props.searchParams;
 
   const { member } = await getAuth();
+
   if (!member || !member.isAdmin) {
     return redirect("/login");
   }
@@ -52,7 +53,7 @@ export default async function LoanPage(props: {
       </div>
       <LoanTable {...{ loans }} />
       <div className="flex flex-row justify-end">
-        <PaginationComp page={currentPage} total={total} limit={limit} />
+        <PaginationComp limit={limit} page={currentPage} total={total} />
       </div>
     </section>
   );

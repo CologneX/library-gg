@@ -1,6 +1,5 @@
 "use client";
 import { Button } from "@nextui-org/button";
-import { Alert, Card, CardBody, cn } from "@nextui-org/react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Trash2Icon } from "lucide-react";
@@ -31,6 +30,7 @@ export default function LoanDeleteButton({ loanId }: Props) {
 
       if (!response.ok) {
         setMessage(result.message);
+
         return;
       }
       setMessage(result.message);
@@ -46,10 +46,10 @@ export default function LoanDeleteButton({ loanId }: Props) {
 
   return (
     <Button
-      color="danger"
-      size="sm"
       isIconOnly
+      color="danger"
       isLoading={isLoading}
+      size="sm"
       onClick={handleDelete}
     >
       {!isLoading && <Trash2Icon className="size-4" />}

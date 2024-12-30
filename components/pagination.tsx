@@ -18,6 +18,7 @@ export default function PaginationComp({
 
   const handlePageChange = (page: number) => {
     const params = new URLSearchParams(searchParams);
+
     params.set("page", page.toString());
     router.push(`${pathname}?${params.toString()}`);
   };
@@ -25,8 +26,8 @@ export default function PaginationComp({
   return (
     <Pagination
       showControls
-      total={totalPages}
       page={page}
+      total={totalPages}
       onChange={handlePageChange}
     />
   );

@@ -1,7 +1,9 @@
 import { notFound } from "next/navigation";
+
+import UpdateCollectionForm from "./form";
+
 import { getAuth } from "@/app/api/auth/cookie";
 import { prisma } from "@/lib/prisma";
-import UpdateCollectionForm from "./form";
 import { PageParam } from "@/types/param";
 
 export default async function UpdateCollectionPage({ params }: PageParam) {

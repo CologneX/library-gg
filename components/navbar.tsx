@@ -15,11 +15,12 @@ import { link as linkStyles } from "@nextui-org/theme";
 import NextLink from "next/link";
 import clsx from "clsx";
 
+import ProfileButton from "./profile-button";
+
 import { ThemeSwitch } from "@/components/theme-switch";
 import { HeartFilledIcon, SearchIcon, Logo } from "@/components/icons";
 import { getAuth } from "@/app/api/auth/cookie";
-import ProfileButton from "./profile-button";
-import { adminNavItems, memberNavItems, siteConfig } from "@/config/site";
+import { adminNavItems, memberNavItems } from "@/config/site";
 
 export const Navbar = async () => {
   const { member } = await getAuth();
@@ -62,7 +63,7 @@ export const Navbar = async () => {
               <NextLink
                 className={clsx(
                   linkStyles({ color: "foreground" }),
-                  "data-[active=true]:text-primary data-[active=true]:font-medium"
+                  "data-[active=true]:text-primary data-[active=true]:font-medium",
                 )}
                 color="foreground"
                 href={item.href}
@@ -88,8 +89,8 @@ export const Navbar = async () => {
           ) : (
             <Button
               as={Link}
-              href="/login"
               className="text-sm font-normal text-default-600 bg-default-100"
+              href="/login"
               startContent={<HeartFilledIcon className="text-danger" />}
               variant="flat"
             >

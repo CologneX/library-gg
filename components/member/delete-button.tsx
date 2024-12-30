@@ -33,10 +33,10 @@ export default function MemberDeleteButton({ memberId }: { memberId: string }) {
 
   return (
     <Button
-      color="danger"
-      size="sm"
       isIconOnly
+      color="danger"
       isLoading={isLoading}
+      size="sm"
       onPress={handleDelete}
     >
       <Trash2Icon className="size-4" />

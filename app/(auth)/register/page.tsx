@@ -1,5 +1,4 @@
 "use client";
-import { title } from "@/components/primitives";
 import { Button } from "@nextui-org/button";
 import { Input } from "@nextui-org/input";
 import {
@@ -10,45 +9,50 @@ import {
   Form,
 } from "@nextui-org/react";
 import { cn } from "@nextui-org/theme";
+
 import { signUp } from "../../api/auth/actions/register";
 
 export default function RegisterPage() {
   return (
     <Card>
       <CardHeader>
-        <h1 className={cn("text-2xl font-bold text-center w-full")}>Register</h1>
+        <h1 className={cn("text-2xl font-bold text-center w-full")}>
+          Register
+        </h1>
       </CardHeader>
-      <Form validationBehavior="native" action={signUp}>
+      <Form action={signUp} validationBehavior="native">
         <CardBody className="flex flex-col gap-2">
           <Input
-            placeholder="Username"
-            name="username"
             isRequired
             errorMessage="Please enter a valid Username"
             label="Username"
             labelPlacement="outside"
+            name="username"
+            placeholder="Username"
           />
           <Input
-            placeholder="Password"
-            name="password"
             isRequired
             errorMessage="Please enter a valid Password"
             label="Password"
             labelPlacement="outside"
+            name="password"
+            placeholder="Password"
             type="password"
           />
           <Input
-            placeholder="Password"
-            name="confirmPassword"
             isRequired
             errorMessage="Please enter a valid Password"
             label="Confirm Password"
             labelPlacement="outside"
+            name="confirmPassword"
+            placeholder="Password"
             type="password"
           />
         </CardBody>
         <CardFooter>
-          <Button type="submit" fullWidth>Daftar</Button>
+          <Button fullWidth type="submit">
+            Daftar
+          </Button>
         </CardFooter>
       </Form>
     </Card>

@@ -1,6 +1,5 @@
 "use client";
 
-import { signOut } from "@/app/api/auth/actions/sign-out";
 import { Button } from "@nextui-org/button";
 import {
   Dropdown,
@@ -8,8 +7,11 @@ import {
   DropdownMenu,
   DropdownItem,
 } from "@nextui-org/react";
-import { HeartFilledIcon } from "./icons";
 import { Member } from "@prisma/client";
+
+import { HeartFilledIcon } from "./icons";
+
+import { signOut } from "@/app/api/auth/actions/sign-out";
 
 export default function ProfileButton({ member }: { member: Member }) {
   return (
@@ -25,10 +27,10 @@ export default function ProfileButton({ member }: { member: Member }) {
       </DropdownTrigger>
       <DropdownMenu aria-label="Static Actions">
         <DropdownItem
-          onPress={signOut}
           key="delete"
           className="text-danger"
           color="danger"
+          onPress={signOut}
         >
           Log Out
         </DropdownItem>

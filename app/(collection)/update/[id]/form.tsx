@@ -1,5 +1,4 @@
 "use client";
-import { title } from "@/components/primitives";
 import {
   Alert,
   Button,
@@ -12,6 +11,8 @@ import {
 import { Collection } from "@prisma/client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+
+import { title } from "@/components/primitives";
 import { ApiError } from "@/types/api";
 
 interface Props {
@@ -55,6 +56,7 @@ export default function UpdateCollectionForm({ collection }: Props) {
       if (!response.ok) {
         setErrors(result.errors || []);
         setMessage(result.message);
+
         return;
       }
 
@@ -82,81 +84,81 @@ export default function UpdateCollectionForm({ collection }: Props) {
           {message && (
             <Alert
               color={errors.length > 0 ? "warning" : "success"}
-              title={errors.length > 0 ? "Gagal" : "Berhasil"}
               description={message}
+              title={errors.length > 0 ? "Gagal" : "Berhasil"}
             />
           )}
 
           <Input
-            name="title"
             isRequired
-            label="Judul"
             defaultValue={collection.title}
-            isInvalid={!!getFieldError("title")}
             errorMessage={getFieldError("title")}
+            isInvalid={!!getFieldError("title")}
+            label="Judul"
+            name="title"
           />
 
           <Input
-            name="author"
-            label="Penulis"
             defaultValue={collection.author || ""}
-            isInvalid={!!getFieldError("author")}
             errorMessage={getFieldError("author")}
+            isInvalid={!!getFieldError("author")}
+            label="Penulis"
+            name="author"
           />
 
           <Input
-            name="publisher"
-            label="Penerbit"
             defaultValue={collection.publisher || ""}
-            isInvalid={!!getFieldError("publisher")}
             errorMessage={getFieldError("publisher")}
+            isInvalid={!!getFieldError("publisher")}
+            label="Penerbit"
+            name="publisher"
           />
 
           <Input
-            name="isbn"
-            label="ISBN"
             defaultValue={collection.isbn || ""}
-            isInvalid={!!getFieldError("isbn")}
             errorMessage={getFieldError("isbn")}
+            isInvalid={!!getFieldError("isbn")}
+            label="ISBN"
+            name="isbn"
           />
 
           <Input
-            type="number"
-            name="yearPublished"
-            label="Tahun Terbit"
             defaultValue={collection.yearPublished?.toString()}
-            isInvalid={!!getFieldError("yearPublished")}
             errorMessage={getFieldError("yearPublished")}
+            isInvalid={!!getFieldError("yearPublished")}
+            label="Tahun Terbit"
+            name="yearPublished"
+            type="number"
           />
 
           <Input
+            defaultValue={collection.totalCopies.toString()}
+            errorMessage={getFieldError("totalCopies")}
+            isInvalid={!!getFieldError("totalCopies")}
+            label="Total Copy"
+            min={1}
             name="totalCopies"
             type="number"
-            min={1}
-            label="Total Copy"
-            defaultValue={collection.totalCopies.toString()}
-            isInvalid={!!getFieldError("totalCopies")}
-            errorMessage={getFieldError("totalCopies")}
           />
 
           <Input
-            name="availableCopies"
-            type="number"
+            defaultValue={collection.availableCopies.toString()}
+            errorMessage={getFieldError("availableCopies")}
+            isInvalid={!!getFieldError("availableCopies")}
             label="Copy Tersedia"
             min={0}
-            defaultValue={collection.availableCopies.toString()}
-            isInvalid={!!getFieldError("availableCopies")}
-            errorMessage={getFieldError("availableCopies")}
+            name="availableCopies"
+            type="number"
           />
         </CardBody>
 
         <CardFooter>
           <Button
-            type="submit"
             fullWidth
             className="mt-auto"
-            isLoading={isLoading}
             isDisabled={isLoading}
+            isLoading={isLoading}
+            type="submit"
           >
             Simpan
           </Button>

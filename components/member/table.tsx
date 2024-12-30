@@ -9,9 +9,10 @@ import {
   TableCell,
   Chip,
 } from "@nextui-org/react";
-import { Key } from "react";
-import { formatDate } from "@/lib/date";
+
 import MemberDeleteButton from "./delete-button";
+
+import { formatDate } from "@/lib/date";
 
 interface Props {
   members: Pick<
@@ -55,7 +56,7 @@ export default function MemberTable({ members }: Props) {
       <TableHeader columns={columns}>
         {(column) => <TableColumn key={column.key}>{column.label}</TableColumn>}
       </TableHeader>
-      <TableBody items={rows} emptyContent="Tidak ada data anggota">
+      <TableBody emptyContent="Tidak ada data anggota" items={rows}>
         {(item) => (
           <TableRow key={item.key}>
             {(columnKey) => (

@@ -32,17 +32,17 @@ export default function BookCover({ isbn, title }: Props) {
         </div>
       )}
       <Image
-        loader={myLoader}
-        src={`https://covers.openlibrary.org/b/isbn/${isbn}-M.jpg`}
-        alt={`Cover of ${title}`}
         fill
+        alt={`Cover of ${title}`}
         className="object-cover"
-        onLoadingComplete={() => setIsLoading(false)}
+        loader={myLoader}
+        sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 20vw"
+        src={`https://covers.openlibrary.org/b/isbn/${isbn}-M.jpg`}
         onError={() => {
           setIsLoading(false);
           setError(true);
         }}
-        sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 20vw"
+        onLoadingComplete={() => setIsLoading(false)}
       />
     </div>
   );

@@ -1,9 +1,12 @@
-import BooksGrid from "../components/collection/books-grid";
 import { Button } from "@nextui-org/button";
 import Link from "next/link";
+
+import BooksGrid from "../components/collection/books-grid";
+
+import { getAuth } from "./api/auth/cookie";
+
 import { prisma } from "@/lib/prisma";
 import PaginationComp from "@/components/pagination";
-import { getAuth } from "./api/auth/cookie";
 
 export default async function Home(props: {
   searchParams: Promise<{ page?: string }>;
@@ -42,7 +45,7 @@ export default async function Home(props: {
 
       <BooksGrid collection={collection} />
       <div className="flex flex-row justify-end">
-        <PaginationComp page={currentPage} total={total} limit={limit} />
+        <PaginationComp limit={limit} page={currentPage} total={total} />
       </div>
     </section>
   );

@@ -90,7 +90,6 @@ import {
   TableHeader,
   TableRow,
 } from "@nextui-org/react";
-import { Key } from "react";
 
 type LoanItemWithCollection = LoanItem & {
   collection: Collection;
@@ -121,7 +120,7 @@ export default function LoanItemsTable({
       <TableHeader columns={columns}>
         {(column) => <TableColumn key={column.key}>{column.label}</TableColumn>}
       </TableHeader>
-      <TableBody items={rows} emptyContent={"Tidak ada koleksi dipinjam"}>
+      <TableBody emptyContent={"Tidak ada koleksi dipinjam"} items={rows}>
         {(item) => (
           <TableRow key={item.key}>
             {(columnKey) => (

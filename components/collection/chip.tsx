@@ -9,6 +9,7 @@ export default function BookChip({ available }: { available: number }) {
       </Chip>
     );
   }
+
   return (
     <Chip color="warning" size="sm" variant="flat">
       Tidak Tersedia

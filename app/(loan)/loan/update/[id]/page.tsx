@@ -1,8 +1,10 @@
 import { notFound } from "next/navigation";
+import { Metadata } from "next";
+
+import UpdateLoanForm from "./form";
+
 import { prisma } from "@/lib/prisma";
 import { getAuth } from "@/app/api/auth/cookie";
-import { Metadata } from "next";
-import UpdateLoanForm from "./form";
 import { PageParam } from "@/types/param";
 
 async function getLoan(id: string) {
@@ -64,5 +66,5 @@ export default async function UpdateLoanPage({ params }: PageParam) {
     },
   });
 
-  return <UpdateLoanForm loan={loan} collections={collections} />;
+  return <UpdateLoanForm collections={collections} loan={loan} />;
 }

@@ -1,5 +1,5 @@
 export type SiteConfig = typeof siteConfig;
-export type NavItem = typeof memberNavItems[number];
+export type NavItem = (typeof memberNavItems)[number];
 export const siteConfig = {
   name: "LibraryGG",
   description: "Tempat Library Keren",

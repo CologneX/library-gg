@@ -1,7 +1,6 @@
 "use client";
 import { Loan } from "@prisma/client";
 import {
-  getKeyValue,
   Table,
   TableBody,
   TableCell,
@@ -9,11 +8,13 @@ import {
   TableHeader,
   TableRow,
 } from "@nextui-org/react";
-import LoanUpdateButton from "./update-buttons";
-import { formatDate } from "@/lib/date";
 import { Key, useCallback } from "react";
+
+import LoanUpdateButton from "./update-buttons";
 import LoanReturnButton from "./return-button";
 import LoanDeleteButton from "./delete-button";
+
+import { formatDate } from "@/lib/date";
 
 export default function LoanTable({ loans }: { loans: Loan[] }) {
   // id: string;
@@ -78,7 +79,7 @@ export default function LoanTable({ loans }: { loans: Loan[] }) {
       <TableHeader columns={columns}>
         {(column) => <TableColumn key={column.key}>{column.label}</TableColumn>}
       </TableHeader>
-      <TableBody items={rows} emptyContent={"Tidak ada data peminjaman"}>
+      <TableBody emptyContent={"Tidak ada data peminjaman"} items={rows}>
         {(item) => (
           <TableRow key={item.key}>
             {(columnKey) => (

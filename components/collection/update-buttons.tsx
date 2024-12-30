@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export default function CollectionUpdateButton({ bookId }: { bookId: string }) {
   return (
-    <Link href={`/update/${bookId}`} className="w-full">
+    <Link className="w-full" href={`/update/${bookId}`}>
       <Button fullWidth size="sm">
         Ubah
       </Button>

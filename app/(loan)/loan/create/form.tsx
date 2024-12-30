@@ -15,7 +15,6 @@ import {
   TableRow,
   TableCell,
   DatePicker,
-  ScrollShadow,
   Alert,
 } from "@nextui-org/react";
 import { useEffect, useState } from "react";
@@ -23,6 +22,7 @@ import { useRouter } from "next/navigation";
 import { parseDate } from "@internationalized/date";
 import { I18nProvider } from "@react-aria/i18n";
 import { Trash2Icon } from "lucide-react";
+
 import { ApiError } from "@/types/api";
 
 interface Props {
@@ -44,11 +44,11 @@ export default function CreateLoanForm({ members, collections }: Props) {
   const [errors, setErrors] = useState<ApiError[]>([]);
   const [message, setMessage] = useState("");
   const [selectedMember, setSelectedMember] = useState<Set<string>>(
-    new Set([])
+    new Set([]),
   );
   const [loanDate, setLoanDate] = useState<Date>(new Date());
   const [returnDueDate, setReturnDueDate] = useState<Date>(
-    new Date(loanDate.getTime() + 7 * 24 * 60 * 60 * 1000)
+    new Date(loanDate.getTime() + 7 * 24 * 60 * 60 * 1000),
   );
   const [selectedCollections, setSelectedCollections] = useState<
     SelectedCollection[]
@@ -59,14 +59,16 @@ export default function CreateLoanForm({ members, collections }: Props) {
   };
 
   const availableCollections = collections.filter(
-    (c) => !selectedCollections.find((sc) => sc.id === c.id)
+    (c) => !selectedCollections.find((sc) => sc.id === c.id),
   );
+
   useEffect(() => {
     setReturnDueDate(new Date(loanDate.getTime() + 7 * 24 * 60 * 60 * 1000));
   }, [loanDate]);
   const handleAddCollection = (keys: any) => {
     const collectionId = Array.from(keys)[0];
     const collection = collections.find((c) => c.id === collectionId);
+
     if (collection) {
       setSelectedCollections([
         ...selectedCollections,
@@ -84,7 +86,7 @@ export default function CreateLoanForm({ members, collections }: Props) {
 
   const handleRemoveCollection = (collectionId: string) => {
     setSelectedCollections(
-      selectedCollections.filter((c) => c.id !== collectionId)
+      selectedCollections.filter((c) => c.id !== collectionId),
     );
   };
 
@@ -115,6 +117,7 @@ export default function CreateLoanForm({ members, collections }: Props) {
       if (!response.ok) {
         setErrors(result.errors || []);
         setMessage(result.message);
+
         return;
       }
 
@@ -136,18 +139,18 @@ export default function CreateLoanForm({ members, collections }: Props) {
         {message && (
           <Alert
             color={errors.length > 0 ? "warning" : "success"}
-            title={errors.length > 0 ? "Gagal" : "Berhasil"}
             description={message}
+            title={errors.length > 0 ? "Gagal" : "Berhasil"}
           />
         )}
 
         <Select
+          isVirtualized
+          errorMessage={getFieldError("memberId")}
+          isInvalid={!!getFieldError("memberId")}
           label="Pilih Anggota"
           selectedKeys={selectedMember}
-          isVirtualized
           onSelectionChange={(keys) => setSelectedMember(keys as Set<string>)}
-          isInvalid={!!getFieldError("memberId")}
-          errorMessage={getFieldError("memberId")}
         >
           {members.map((member) => (
             <SelectItem key={member.id} value={member.id}>
@@ -159,18 +162,18 @@ export default function CreateLoanForm({ members, collections }: Props) {
         <div className="grid grid-cols-2 gap-4">
           <I18nProvider locale="id-ID">
             <DatePicker
+              errorMessage={getFieldError("loanDate")}
+              isInvalid={!!getFieldError("loanDate")}
               label="Tanggal Pinjam"
               value={parseDate(loanDate.toISOString().split("T")[0])}
               onChange={(e) => e && setLoanDate(new Date(e.toString()))}
-              isInvalid={!!getFieldError("loanDate")}
-              errorMessage={getFieldError("loanDate")}
             />
             <DatePicker
+              errorMessage={getFieldError("returnDueDate")}
+              isInvalid={!!getFieldError("returnDueDate")}
               label="Tanggal Kembali"
               value={parseDate(returnDueDate.toISOString().split("T")[0])}
               onChange={(e) => e && setReturnDueDate(new Date(e.toString()))}
-              isInvalid={!!getFieldError("returnDueDate")}
-              errorMessage={getFieldError("returnDueDate")}
             />
           </I18nProvider>
         </div>
@@ -178,19 +181,19 @@ export default function CreateLoanForm({ members, collections }: Props) {
         <div className="space-y-2">
           <Select
             isVirtualized
+            errorMessage={getFieldError("collectionIds")}
+            isInvalid={!!getFieldError("collectionIds")}
             label="Tambah Koleksi"
             selectedKeys={selectedCollections.map(
-              (collection) => collection.key
+              (collection) => collection.key,
             )}
             onSelectionChange={(keys) => handleAddCollection(keys)}
-            isInvalid={!!getFieldError("collectionIds")}
-            errorMessage={getFieldError("collectionIds")}
           >
             {availableCollections.map((collection) => (
               <SelectItem
                 key={collection.id}
-                value={collection.id}
                 textValue={collection.title}
+                value={collection.id}
               >
                 {collection.title}{" "}
                 <span className="text-sm text-default-500">
@@ -217,9 +220,9 @@ export default function CreateLoanForm({ members, collections }: Props) {
                   <TableCell>{collection.isbn}</TableCell>
                   <TableCell>
                     <Button
+                      isIconOnly
                       color="danger"
                       size="sm"
-                      isIconOnly
                       onPress={() => handleRemoveCollection(collection.id)}
                     >
                       <Trash2Icon className="size-4" />
@@ -235,12 +238,12 @@ export default function CreateLoanForm({ members, collections }: Props) {
 
       <CardFooter>
         <Button
-          color="primary"
-          isLoading={isLoading}
           fullWidth
+          color="primary"
           isDisabled={
             selectedMember.size === 0 || selectedCollections.length === 0
           }
+          isLoading={isLoading}
           onPress={handleSubmit}
         >
           Buat Peminjaman
